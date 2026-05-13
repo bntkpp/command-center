@@ -8,8 +8,16 @@ export type Shortcut = {
   handler: (e: KeyboardEvent) => void
 }
 
+const MODIFIER_NAMES = new Set(['control', 'ctrl', 'cmd', 'shift', 'alt'])
+
+const KEY_ALIASES: Record<string, string> = {
+  space: ' ',
+  enter: 'enter',
+  esc: 'escape',
+}
+
 function matches(combo: string, e: KeyboardEvent): boolean {
-  const parts = combo.toLowerCase().split('+').map((p) => p.trim())
+  const parts = combo.toLowerCase().split('+').map((p) => p.trim()).filter(Boolean)
   const needsCtrlOrMeta = parts.includes('control') || parts.includes('ctrl') || parts.includes('cmd')
   const needsShift = parts.includes('shift')
   const needsAlt = parts.includes('alt')
@@ -19,8 +27,10 @@ function matches(combo: string, e: KeyboardEvent): boolean {
   if (needsShift !== e.shiftKey) return false
   if (needsAlt !== e.altKey) return false
 
-  const lastKey = parts[parts.length - 1]
-  return e.key.toLowerCase() === lastKey
+  const keyPart = parts.filter((p) => !MODIFIER_NAMES.has(p)).pop()
+  if (!keyPart) return false
+  const expected = KEY_ALIASES[keyPart] ?? keyPart
+  return e.key.toLowerCase() === expected
 }
 
 function isEditableTarget(target: EventTarget | null): boolean {

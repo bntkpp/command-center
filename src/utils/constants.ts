@@ -97,6 +97,7 @@ export const STORAGE_KEYS = {
   lastVisitDate: 'cc_last_visit_date',
   lastBriefingDate: 'cc_last_briefing_date',
   events: 'cc_events',
+  inbox: 'cc_inbox',
 } as const
 
 /* ─── Schedule defaults ────────────────────────────────────────────────── */
