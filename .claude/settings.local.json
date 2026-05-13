@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(extract-text \"C:\\\\Users\\\\matikepp\\\\Downloads\\\\requerimientos_command_center.docx\")",
+      "Bash(ls \"C:\\\\Users\\\\matikepp\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\25c006e6-c42c-4ddf-b2d3-572aad45025f\\\\b316b52a-3f13-42ef-af34-dd19a5c97af0\\\\skills\\\\docx\\\\scripts\\\\\" 2>/dev/null | head -30)",
+      "Bash(ls 'C:/Users/matikepp/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/25c006e6-c42c-4ddf-b2d3-572aad45025f/b316b52a-3f13-42ef-af34-dd19a5c97af0/skills/docx/scripts/')"
+    ]
+  }
+}
