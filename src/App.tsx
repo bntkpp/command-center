@@ -15,8 +15,12 @@ import { RoasAlert } from './components/RoasAlert'
 import { SettingsModal } from './components/SettingsModal'
 import { ShortcutsModal } from './components/ShortcutsModal'
 import { MorningBriefing } from './components/MorningBriefing'
+import { QuickCapture } from './components/QuickCapture'
+import { InboxCard } from './components/InboxCard'
 import { useDailyTasks } from './hooks/useDailyTasks'
 import { useNotifications } from './hooks/useNotifications'
+import { useConfetti } from './hooks/useConfetti'
+import { useSettings } from './hooks/useSettings'
 import {
   useKeyboardShortcuts,
   type Shortcut,
@@ -48,12 +52,18 @@ function App() {
 
   const { blocks } = useSchedule()
   const { todayWorkout } = useGym()
+  const { settings } = useSettings()
+  const { modules } = settings
 
   // Side-effect: browser notifications (no-op unless enabled in settings).
   useNotifications()
 
+  // Celebrate when all 3 tasks land.
+  useConfetti(completed === 3)
+
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [quickCaptureOpen, setQuickCaptureOpen] = useState(false)
 
   function focusSlot(idx: number) {
     const inputs = document.querySelectorAll<HTMLInputElement>(
@@ -110,20 +120,26 @@ function App() {
         handler: () => setSettingsOpen(true),
       },
       {
+        combo: 'Control+Shift+Space',
+        description: 'Quick capture al inbox',
+        category: 'general',
+        handler: () => setQuickCaptureOpen(true),
+      },
+      {
         combo: 'Control+1',
-        description: 'Enfocar tarea 01 · Universidad',
+        description: 'Enfocar tarea 01',
         category: 'tareas',
         handler: () => focusSlot(0),
       },
       {
         combo: 'Control+2',
-        description: 'Enfocar tarea 02 · Negocio',
+        description: 'Enfocar tarea 02',
         category: 'tareas',
         handler: () => focusSlot(1),
       },
       {
         combo: 'Control+3',
-        description: 'Enfocar tarea 03 · Salud',
+        description: 'Enfocar tarea 03',
         category: 'tareas',
         handler: () => focusSlot(2),
       },
@@ -146,6 +162,7 @@ function App() {
         handler: () => {
           setSettingsOpen(false)
           setShortcutsOpen(false)
+          setQuickCaptureOpen(false)
         },
       },
     ],
@@ -159,21 +176,23 @@ function App() {
     <main className="min-h-screen w-full px-4 py-6 md:px-10 md:py-10">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         {/* Row 1 — Hero + Today stats */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <div className={`grid grid-cols-1 gap-6 ${modules.todayStats ? 'lg:grid-cols-3' : ''}`}>
+          <div className={modules.todayStats ? 'lg:col-span-2' : ''}>
             <Header
               onOpenSettings={() => setSettingsOpen(true)}
               onOpenShortcuts={() => setShortcutsOpen(true)}
             />
           </div>
-          <div className="lg:col-span-1">
-            <TodayStats completed={completed} filled={filled} total={3} />
-          </div>
+          {modules.todayStats && (
+            <div className="lg:col-span-1">
+              <TodayStats completed={completed} filled={filled} total={3} />
+            </div>
+          )}
         </div>
 
         {/* Row 2 — Tasks + Gym tracker */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <div className={`grid grid-cols-1 gap-6 ${modules.gymTracker ? 'lg:grid-cols-3' : ''}`}>
+          <div className={modules.gymTracker ? 'lg:col-span-2' : ''}>
             <DailyTasks
               todaySlots={todaySlots}
               tomorrowSlots={tomorrowSlots}
@@ -187,39 +206,60 @@ function App() {
               onRemoveTask={removeTask}
             />
           </div>
-          <div className="lg:col-span-1">
-            <GymTracker />
-          </div>
+          {modules.gymTracker && (
+            <div className="lg:col-span-1">
+              <GymTracker />
+            </div>
+          )}
         </div>
 
-        {/* Row 3 — Schedule + Export */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <Schedule />
+        {/* Row 3 — Schedule + Export (only if at least one is enabled) */}
+        {(modules.schedule || modules.exportCalendar) && (
+          <div
+            className={`grid grid-cols-1 gap-6 ${
+              modules.schedule && modules.exportCalendar ? 'lg:grid-cols-3' : ''
+            }`}
+          >
+            {modules.schedule && (
+              <div
+                className={modules.exportCalendar ? 'lg:col-span-2' : ''}
+              >
+                <Schedule />
+              </div>
+            )}
+            {modules.exportCalendar && (
+              <div
+                className={modules.schedule ? 'lg:col-span-1' : ''}
+              >
+                <ExportCalendar />
+              </div>
+            )}
           </div>
-          <div className="lg:col-span-1">
-            <ExportCalendar />
-          </div>
-        </div>
+        )}
 
         {/* Row 4 — Agenda (full width) */}
-        <EventsCard />
+        {modules.events && <EventsCard />}
 
         {/* Conditional ROAS alert */}
-        <RoasAlert />
+        {modules.business && <RoasAlert />}
 
-        {/* Row 4 — Business cards */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <ZapatillasCard />
-          <DropshippingCard />
-          <BusinessTodos />
-        </div>
+        {/* Row 5 — Business cards */}
+        {modules.business && (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <ZapatillasCard />
+            <DropshippingCard />
+            <BusinessTodos />
+          </div>
+        )}
 
-        {/* Row 5 — 7-day chart */}
-        <BusinessChart />
+        {/* Row 6 — 7-day chart */}
+        {modules.business && <BusinessChart />}
 
-        {/* Row 6 — Quote */}
-        <FooterQuote />
+        {/* Row 7 — Inbox */}
+        {modules.inbox && <InboxCard />}
+
+        {/* Row 8 — Quote */}
+        {modules.footerQuote && <FooterQuote />}
       </div>
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
@@ -227,6 +267,10 @@ function App() {
         open={shortcutsOpen}
         onClose={() => setShortcutsOpen(false)}
         shortcuts={shortcuts}
+      />
+      <QuickCapture
+        open={quickCaptureOpen}
+        onClose={() => setQuickCaptureOpen(false)}
       />
       <MorningBriefing />
     </main>

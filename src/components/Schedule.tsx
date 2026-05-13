@@ -1,13 +1,27 @@
 import { useState } from 'react'
 import { Clock, Pencil, Plus, Trash2, RotateCcw, Check } from 'lucide-react'
 import { useSchedule } from '../hooks/useSchedule'
+import { useSettings } from '../hooks/useSettings'
 import {
   AREA_STYLES,
   SCHEDULE_AREAS,
+  TASK_AREAS,
   type ScheduleArea,
   type ScheduleBlock,
+  type TaskArea,
 } from '../utils/constants'
 import { formatDuration, hhmmToMinutes } from '../utils/timeHelpers'
+
+function resolveAreaLabel(
+  area: ScheduleArea,
+  labelsByTaskArea: Record<TaskArea, string>,
+  fallback: string
+): string {
+  if ((TASK_AREAS as readonly string[]).includes(area)) {
+    return labelsByTaskArea[area as TaskArea] ?? fallback
+  }
+  return fallback
+}
 
 export function Schedule() {
   const {
@@ -171,6 +185,12 @@ function BlockRow({
   onRemove: () => void
 }) {
   const styles = AREA_STYLES[block.area]
+  const { settings } = useSettings()
+  const displayAreaLabel = resolveAreaLabel(
+    block.area,
+    settings.areaLabels,
+    styles.label
+  )
   const Icon = styles.Icon
 
   return (
@@ -276,7 +296,7 @@ function BlockRow({
               <span
                 className={`hidden shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-medium tracking-widest uppercase sm:inline-flex ${styles.chip}`}
               >
-                {styles.label}
+                {displayAreaLabel}
               </span>
             </>
           )}

@@ -130,6 +130,8 @@ function TaskCard({
   onRemove?: () => void
 }) {
   const styles = AREA_STYLES[slot.area]
+  const { settings } = useSettings()
+  const displayLabel = settings.areaLabels[slot.area] ?? styles.label
   const Icon = styles.Icon
   const hasText = slot.text.trim().length > 0
 
@@ -165,14 +167,14 @@ function TaskCard({
         <span
           className={`hidden shrink-0 rounded-md border px-2 py-1 text-[10px] font-medium tracking-widest uppercase md:inline-flex ${styles.chip}`}
         >
-          {styles.label}
+          {displayLabel}
         </span>
 
         <input
           type="text"
           value={slot.text}
           onChange={(e) => onTextChange(e.target.value)}
-          placeholder={extra ? 'Tarea extra…' : `Tarea de ${slot.area.toLowerCase()}…`}
+          placeholder={extra ? 'Tarea extra…' : `Tarea de ${displayLabel.toLowerCase()}…`}
           className={`text-cc-text placeholder:text-cc-muted/70 flex-1 bg-transparent text-base outline-none md:text-lg ${
             slot.completed ? 'text-cc-muted line-through decoration-2' : ''
           }`}
@@ -222,6 +224,7 @@ function AddExtraButton({
   compact?: boolean
 }) {
   const [open, setOpen] = useState(false)
+  const { settings } = useSettings()
 
   if (!open) {
     return (
@@ -246,6 +249,7 @@ function AddExtraButton({
       {TASK_AREAS.map((area) => {
         const styles = AREA_STYLES[area]
         const Icon = styles.Icon
+        const label = settings.areaLabels[area] ?? styles.label
         return (
           <button
             key={area}
@@ -257,7 +261,7 @@ function AddExtraButton({
             className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition hover:brightness-125 ${styles.chip}`}
           >
             <Icon size={12} strokeWidth={2.5} />
-            {styles.label}
+            {label}
           </button>
         )
       })}
@@ -361,6 +365,8 @@ function PlannerRow({
   onRemove?: () => void
 }) {
   const styles = AREA_STYLES[slot.area]
+  const { settings } = useSettings()
+  const displayLabel = settings.areaLabels[slot.area] ?? styles.label
   const Icon = styles.Icon
 
   return (
@@ -380,7 +386,7 @@ function PlannerRow({
       <span
         className={`hidden shrink-0 rounded-md border px-2 py-0.5 text-[10px] font-medium tracking-widest uppercase md:inline-flex ${styles.chip}`}
       >
-        {styles.label}
+        {displayLabel}
       </span>
       <input
         type="text"
