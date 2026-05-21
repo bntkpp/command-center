@@ -33,6 +33,19 @@
   --radius-cc: 14px;
 }
 
+/* ── Light mode overrides ── */
+[data-theme="light"] {
+  --color-cc-bg: #EEF0F7;
+  --color-cc-surface: #FFFFFF;
+  --color-cc-surface-2: #F4F6FC;
+  --color-cc-border: #DDE0EE;
+  --color-cc-border-strong: #C5C9DE;
+  --color-cc-text: #0A0A1F;
+  --color-cc-text-soft: #2E304A;
+  --color-cc-muted: #7B7E96;
+  --color-cc-muted-soft: #A8ABBC;
+}
+
 html, body, #root {
   height: 100%;
 }
