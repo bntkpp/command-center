@@ -29,6 +29,8 @@ export type Settings = {
   areaLabels: AreaLabels
   /** Show micro-celebration when reaching 3/3 daily tasks. */
   confettiEnabled: boolean
+  /** Toggle between light and dark themes. */
+  theme: 'light' | 'dark'
 }
 
 export const DEFAULT_MODULES: ModulesVisibility = {
@@ -58,6 +60,7 @@ export const DEFAULT_SETTINGS: Settings = {
   modules: DEFAULT_MODULES,
   areaLabels: DEFAULT_AREA_LABELS,
   confettiEnabled: true,
+  theme: 'dark',
 }
 
 export function useSettings() {
