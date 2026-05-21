@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Header } from './components/Header'
 import { DailyTasks } from './components/DailyTasks'
 import { TodayStats } from './components/TodayStats'
@@ -54,6 +54,10 @@ function App() {
   const { todayWorkout } = useGym()
   const { settings } = useSettings()
   const { modules } = settings
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', settings.theme ?? 'dark')
+  }, [settings.theme])
 
   // Side-effect: browser notifications (no-op unless enabled in settings).
   useNotifications()
