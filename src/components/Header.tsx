@@ -1,4 +1,4 @@
-import { Sparkles, Settings as SettingsIcon, Keyboard } from 'lucide-react'
+import { Sparkles, Settings as SettingsIcon, Keyboard, Sun, Moon } from 'lucide-react'
 import { useCurrentTime } from '../hooks/useCurrentTime'
 import { formatClock, formatLongDate, greetingFor } from '../utils/dateHelpers'
 import { useSettings } from '../hooks/useSettings'
@@ -10,7 +10,8 @@ type Props = {
 
 export function Header({ onOpenSettings, onOpenShortcuts }: Props) {
   const now = useCurrentTime()
-  const { settings } = useSettings()
+  const { settings, update} = useSettings()
+  
   const [hh, mm, ss] = formatClock(now).split(':')
 
   return (
@@ -42,8 +43,17 @@ export function Header({ onOpenSettings, onOpenShortcuts }: Props) {
           aria-label="Configuración"
           title="Configuración"
           className="text-cc-muted hover:text-cc-text-soft border-cc-border hover:border-cc-border-strong inline-flex h-8 w-8 items-center justify-center rounded-lg border transition"
-        >
+        > 
           <SettingsIcon size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={() => update({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
+          aria-label="Cambiar Tema"
+          title="Cambiar tema"
+          className="text-cc-muted hover:text-cc-text-soft border-cc-border hover:border-cc-border-strong inline-flex h-8 w-8 items-center justify-center rounded-lg border transition"
+          >
+            {settings.theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
         </button>
       </div>
 
