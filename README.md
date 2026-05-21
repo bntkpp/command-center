@@ -8,6 +8,19 @@ Construido como PWA — funciona **offline**, se instala como **app de escritori
 
 ---
 
+## Screenshots
+
+### Vista principal — Dark mode
+![Vista principal](screenshots/foto1.jpg)
+
+### Estructura horaria y calendario
+![Estructura horaria](screenshots/foto2.jpg)
+
+### Agenda y módulo de negocios
+![Agenda y negocios](screenshots/foto3.jpg)
+
+---
+
 ## ¿Qué tiene adentro?
 
 | Módulo | Para qué sirve |
